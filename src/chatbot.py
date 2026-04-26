@@ -1,7 +1,14 @@
 from __future__ import annotations
 
+from typing import TypedDict
+
 from src.llm_client import LLMClient
 from src.vector_store import LocalVectorStore
+
+
+class ChatbotResponse(TypedDict):
+    answer: str
+    sources: list[str]
 
 
 class MedicalChatbot:
@@ -10,7 +17,7 @@ class MedicalChatbot:
         self.vector_store.load()
         self.llm = LLMClient()
 
-    def ask(self, question: str) -> dict[str, object]:
+    def ask(self, question: str) -> ChatbotResponse:
         hits = self.vector_store.search(question)
         if not hits:
             return {

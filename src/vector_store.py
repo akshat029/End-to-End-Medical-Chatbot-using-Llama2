@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import pickle
 from pathlib import Path
+from typing import TypedDict
 
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -14,6 +15,12 @@ from src.data_loader import chunk_text
 MATRIX_FILE = "tfidf_matrix.npy"
 META_FILE = "metadata.json"
 VECTORIZER_FILE = "vectorizer.pkl"
+
+
+class SearchHit(TypedDict):
+    source: str
+    text: str
+    score: float
 
 
 class LocalVectorStore:
@@ -66,7 +73,7 @@ class LocalVectorStore:
         with vectorizer_path.open("rb") as f:
             self.vectorizer = pickle.load(f)
 
-    def search(self, query: str, top_k: int | None = None) -> list[dict[str, str]]:
+    def search(self, query: str, top_k: int | None = None) -> list[SearchHit]:
         if self.matrix is None:
             raise RuntimeError("Vector matrix is not loaded.")
 
@@ -84,7 +91,7 @@ class LocalVectorStore:
         scores = (self.matrix @ query_vec.T).ravel() / denom
 
         best_indices = np.argsort(scores)[::-1][:k]
-        hits: list[dict[str, str]] = []
+        hits: list[SearchHit] = []
 
         for idx in best_indices:
             if idx < 0 or idx >= len(self.metadata):
@@ -92,7 +99,10 @@ class LocalVectorStore:
             score = float(scores[idx])
             if score <= 0:
                 continue
-            item = dict(self.metadata[idx])
-            item["score"] = score
+            item: SearchHit = {
+                "source": self.metadata[idx]["source"],
+                "text": self.metadata[idx]["text"],
+                "score": score,
+            }
             hits.append(item)
         return hits

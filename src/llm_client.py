@@ -37,4 +37,6 @@ class LLMClient:
             temperature=settings.temperature,
             return_full_text=False,
         )
+        if not isinstance(response, str):
+            raise RuntimeError("Unexpected response type from Hugging Face text_generation API.")
         return response.strip()
