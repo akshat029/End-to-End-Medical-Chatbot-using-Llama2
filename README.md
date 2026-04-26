@@ -3,8 +3,7 @@
 This repository now contains a complete retrieval-augmented medical chatbot pipeline:
 
 - Document ingestion (`.txt`, `.md`, `.pdf`)
-- Chunking + embeddings
-- Local FAISS vector index
+- Chunking + local TF-IDF retrieval index
 - Llama2 response generation through Hugging Face Inference API
 - Streamlit chat UI
 

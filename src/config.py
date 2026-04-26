@@ -12,9 +12,6 @@ load_dotenv()
 class Settings:
     data_dir: str = os.getenv("DATA_DIR", "./data")
     vector_store_dir: str = os.getenv("VECTOR_STORE_DIR", "./vector_store")
-    embedding_model_id: str = os.getenv(
-        "EMBEDDING_MODEL_ID", "sentence-transformers/all-MiniLM-L6-v2"
-    )
     llm_model_id: str = os.getenv("LLM_MODEL_ID", "meta-llama/Llama-2-7b-chat-hf")
     hf_token: str | None = os.getenv("HUGGINGFACEHUB_API_TOKEN")
     top_k: int = int(os.getenv("TOP_K", "4"))
